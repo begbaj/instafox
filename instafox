@@ -1,0 +1,80 @@
+#!/bin/python3.8
+
+import sys
+import os
+import shutil
+
+base_wd_path = os.path.expanduser("~/.instafox/")
+instances_wd_path = base_wd_path + "instances/"
+firefox_wd_path = base_wd_path + "firefox/"
+
+help = "usage: instafox <argument>\n" \
+       "arguments:\n" \
+       "    new: create a new instance\n" \
+       "    delete: delete an existing instance\n" \
+       "    run: run an existing instance\n" \
+
+def init_instances():
+    if not os.path.isdir(base_wd_path):
+        os.mkdir(base_wd_path)
+        os.mkdir(instances_wd_path)
+    elif not os.path.isdir(instances_wd_path):
+        os.mkdir(instances_wd_path)
+    if not os.path.isdir(firefox_wd_path):
+        print("firefox base directory is missing! copy an extracted version of firefox into " + base_wd_path)
+
+
+def new_instance():
+    try:
+        name = sys.argv[2]
+    except Exception as ex:
+        name = input("instance name: ")
+    shutil.copytree(firefox_wd_path, instances_wd_path + name)
+
+
+def del_instance():
+    try:
+        name = sys.argv[2]
+    except Exception as ex:
+        name = input("instance name: ")
+
+    shutil.rmtree(instances_wd_path + name)
+
+
+def list_instances():
+    p = os.listdir(instances_wd_path)
+    for i in p:
+        print(i)
+
+
+def run_instance():
+    try:
+        name = sys.argv[2]
+    except Exception as ex:
+        name = input("instance name: ")
+    os.system(instances_wd_path + name + "/firefox")
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    init_instances()
+    arg = ""
+    try:
+        arg = sys.argv[1]
+    except Exception as ex:
+        print(help)
+        exit()
+
+    if arg == "new":
+        new_instance()
+    elif arg == "list":
+        list_instances()
+    elif arg == "run":
+        run_instance()
+    elif arg == "delete":
+        del_instance()
+    else:
+        print(help)
+
+
+# See PyCharm help at https://www.jetbrains.com/help/pycharm/
